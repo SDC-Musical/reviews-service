@@ -1,5 +1,6 @@
 const express = require('express');
 const { getReviews } = require('../../database/methods/reviews.js');
+const ReviewModel = require('../../database/models/reviews.js');
 const { getReviewSummary } = require('../../database/methods/reviewsummary.js');
 const { queryReviewRating } = require('../middleware/queryParams.js');
 
@@ -40,6 +41,20 @@ router.route('/:product_id')
     } catch {
       res.status(500).send('Internal Server Error.');
     }
-  });
+  })
+  .put(async (req, res) => {})
+  .post(async (req, res) => {
+    let timestamp = new Date();
+    const newReview = ReviewModel.create({
+      review_id: req.options.product_id,
+      product_id: req.options.product_id,
+      username: req.username,
+      review_heading: req.review_heading,
+      review_text: req.review_text,
+      review_rating: req.review_rating,
+      created_at: `${timestamp.getMonth + 1} ${timestamp.getDate + 1}, ${timestamp.getFullYear} ${timestamp.getHours}:${timestamp.getMinutes}:${timestamp.getSeconds}`
+    })
+  })
+  .delete(async (req, res) => {});
 
 module.exports = router;
