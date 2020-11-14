@@ -11,8 +11,9 @@
 ## Table of Contents
 
 1. [Requirements](#requirements)
-1. [Usage](#usage)
-1. [Development](#development)
+2. [Usage](#usage)
+3. [Development](#development)
+4. [Product-API] (#product-api)
 
 ## Requirements
 
@@ -53,3 +54,9 @@ You can install the project's dependencies by going to the root directory of the
 
 Refer to package.json file in the root directory for dependency version numbers.
 
+## Product-API
+- GET /:product_id/summary returns a summary of reviews for product
+- GET /:product_id returns reviews for product
+- PUT /:product_id updates reviews for product and returns number of changes made
+- POST /:product_id adds a review for product and returns review
+- DELETE /:product_id removes all reviews for product and returns success message
