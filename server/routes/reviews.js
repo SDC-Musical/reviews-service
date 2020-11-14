@@ -42,19 +42,42 @@ router.route('/:product_id')
       res.status(500).send('Internal Server Error.');
     }
   })
-  .put(async (req, res) => {})
-  .post(async (req, res) => {
-    let timestamp = new Date();
-    const newReview = ReviewModel.create({
-      review_id: req.options.product_id,
-      product_id: req.options.product_id,
-      username: req.username,
-      review_heading: req.review_heading,
-      review_text: req.review_text,
-      review_rating: req.review_rating,
-      created_at: `${timestamp.getMonth + 1} ${timestamp.getDate + 1}, ${timestamp.getFullYear} ${timestamp.getHours}:${timestamp.getMinutes}:${timestamp.getSeconds}`
-    })
+  .put(async (req, res) => {
+    try {
+      const updateProduct = await ReviewModel.update({product_id: req.options.product_id}, req.data);
+      if (updateProduct < 1) {
+        res.status(404).send('Product Not Found');
+      } else {
+        res.status(200).send(`${updateProduct.n} product(s) updated.`);
+      }
+    } catch {
+      res.status(500).send('Internal Server Error.');
+    }
   })
-  .delete(async (req, res) => {});
+  .post(async (req, res) => {
+    try {
+      let timestamp = new Date();
+      const newReview = await ReviewModel.create({
+        review_id: req.options.product_id,
+        product_id: req.options.product_id,
+        username: req.username,
+        review_heading: req.review_heading,
+        review_text: req.review_text,
+        review_rating: req.review_rating,
+        created_at: `${timestamp.getMonth + 1} ${timestamp.getDate + 1}, ${timestamp.getFullYear} ${timestamp.getHours}:${timestamp.getMinutes}:${timestamp.getSeconds}`
+      });
+      res.json(newReview);
+    } catch {
+      res.status(500).send('Internal Server Error.');
+    }
+  })
+  .delete(async (req, res) => {
+    try {
+      await ReviewModel.deleteMany({product_id: req.options.product_id});
+      res.status(200).send('Product Deleted');
+    } catch {
+      res.status(500).send('Internal Server Error.');
+    }
+  });
 
 module.exports = router;
