@@ -13,7 +13,7 @@
 1. [Requirements](#requirements)
 2. [Usage](#usage)
 3. [Development](#development)
-4. [Product-API] (#product-api)
+4. [Product-API](#product-api)
 
 ## Requirements
 
