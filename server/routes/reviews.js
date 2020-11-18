@@ -60,14 +60,15 @@ router.route('/:product_id')
       const newReview = await ReviewModel.create({
         review_id: req.options.product_id,
         product_id: req.options.product_id,
-        username: req.username,
-        review_heading: req.review_heading,
-        review_text: req.review_text,
-        review_rating: req.review_rating,
-        created_at: `${timestamp.getMonth + 1} ${timestamp.getDate + 1}, ${timestamp.getFullYear} ${timestamp.getHours}:${timestamp.getMinutes}:${timestamp.getSeconds}`
+        username: req.body.username,
+        review_heading: req.body.review_heading,
+        review_text: req.body.review_text,
+        review_rating: req.body.review_rating,
+        created_at: `${timestamp.getMonth() + 1} ${timestamp.getDate() + 1}, ${timestamp.getFullYear()} ${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`
       });
       res.json(newReview);
-    } catch {
+    } catch(err) {
+      console.log('ERROR: ', err);
       res.status(500).send('Internal Server Error.');
     }
   })
