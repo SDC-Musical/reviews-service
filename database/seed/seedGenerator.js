@@ -1,6 +1,6 @@
-import {LoremIpsum} from 'lorem-ipsum';
+const  { LoremIpsum } = require('lorem-ipsum');
 
-function generateReviews(id) {
+function generateReviews(id, cb) {
   const lorem = new LoremIpsum({
     sentencesPerParagraph: {
       max: 8,
@@ -30,7 +30,7 @@ function generateReviews(id) {
     };
     reviews.push(review);
   }
-  return reviews;
+  cb(null, reviews);
 }
 
 module.exports = generateReviews;
