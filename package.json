@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "lorem-ipsum": "^2.0.3",
     "mongoose": "^5.10.7",
+    "postgres": "^1.0.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-onclickoutside": "^6.9.0",

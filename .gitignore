@@ -30,3 +30,6 @@ globalConfig.json
 
 # JUnit
 artifacts/
+
+# Seeded Data File
+data.csv

@@ -1,6 +1,11 @@
 const  { LoremIpsum } = require('lorem-ipsum');
+const fs = require('fs');
+const csvWriter = require('csv-write-stream');
+const writer = csvWriter();
 
-function generateReviews(id, cb) {
+writer.pipe(fs.createWriteStream('data.csv'));
+
+function generateReviews(start, stop) {
   const lorem = new LoremIpsum({
     sentencesPerParagraph: {
       max: 8,
@@ -20,17 +25,38 @@ function generateReviews(id, cb) {
     let hour = Math.floor(Math.random() * 24);
     let minutes = Math.floor(Math.random() * 60);
     let seconds = Math.floor(Math.random() * 60);
-    let review = {
-      product_id: id,
+    // let review =
+    writer.write({
+      product_id: start,
       username: lorem.generateWords(1),
       review_heading: lorem.generateWords(headingQuantity),
       review_text: lorem.generateParagraphs(1),
       review_rating: Math.ceil(Math.random() * 5),
       created_at: new Date(2020, month, day, hour, minutes, seconds).toISOString()
-    };
-    reviews.push(review);
+    })
+    // reviews.push(review);
   }
-  cb(null, reviews);
+  if (start === 10000000) {
+    writer.end();
+  }
+  if (start === stop) {
+    // writer.end();
+    console.log('Seeding Complete');
+    return 'Complete';
+  } else {
+    return generateReviews(start + 1, stop);
+  }
+  // cb(null, reviews);
+  // return reviews;
 }
+
+function createFile() {
+  for (let i = 1; i <= 1000; i++) {
+    generateReviews(i, i * 10000);
+  }
+  return 'Done';
+}
+
+createFile();
 
 module.exports = generateReviews;
