@@ -62,13 +62,4 @@ let entries = function(start, stop) {
 let reviewList = createReviews();
 
 Promise.resolve(entries(1, 100000))
-.then(() => entries(100001, 200000))
-.then(() => entries(200001, 300000))
-.then(() => entries(300001, 400000))
-.then(() => entries(400001, 500000))
-.then(() => entries(500001, 600000))
-.then(() => entries(600001, 700000))
-.then(() => entries(700001, 800000))
-.then(() => entries(800001, 900000))
-.then(() => entries(900001, 1000000))
 .catch(err => console.log(err));
