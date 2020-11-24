@@ -1,6 +1,6 @@
 const  { LoremIpsum } = require('lorem-ipsum');
 const { Client } = require('pg');
-const client = new Client();
+const client = new Client({database: 'product_reviews'});
 const Promise = require('bluebird');
 
 
@@ -49,17 +49,22 @@ let entries = function(start, stop) {
         } else {
           if (i === 10000000) {
             console.log('COMPLETE');
+            return;
+          } else {
+            entries(start + 10, stop + 10);
           }
         }
       })
     }
   }
-  return new Promise((resolve, reject) => {
-    resolve();
-  });
+  // return new Promise((resolve, reject) => {
+  //   resolve();
+  // });
 };
 
 let reviewList = createReviews();
 
-Promise.resolve(entries(1, 100000))
-.catch(err => console.log(err));
+entries(1, 10);
+
+// Promise.resolve(entries(1, 100000))
+// .catch(err => console.log(err));
