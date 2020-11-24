@@ -66,9 +66,9 @@ let entries = function(start, stop) {
       })
     }
   }
-  return new Promise((resolve, reject) => {
+  return setTimeout(() => {new Promise((resolve, reject) => {
     resolve();
-  });
+  })}, 5000);
 };
 
 let reviewList = createReviews();
