@@ -3,6 +3,7 @@ const postgres = require('postgres');
 const fs = require('fs');
 const csvWriter = require('csv-write-stream');
 const writer = csvWriter();
+const Promise = require('bluebird');
 
 // writer.pipe(fs.createWriteStream('data.csv'));
 
@@ -65,18 +66,22 @@ let entries = function(start, stop, file) {
       })
     }
   }
-  return;
+  return new Promise((resolve, reject) => {
+    resolve();
+  });
 };
 
 let reviewList = createReviews();
 
-entries(1, 1000000, 1);
-entries(1, 1000000, 2);
-entries(1, 1000000, 3);
-entries(1, 1000000, 4);
-entries(1, 1000000, 5);
-entries(1, 1000000, 6);
-entries(1, 1000000, 7);
-entries(1, 1000000, 8);
-entries(1, 1000000, 9);
-entries(1, 1000000, 10);
+Promise.resolve(entries(1, 1000000, 1))
+.then(() => entries(1, 1000000, 2))
+.then(() => entries(1, 1000000, 3))
+.then(() => entries(1, 1000000, 4))
+.then(() => entries(1, 1000000, 5))
+.then(() => entries(1, 1000000, 6))
+.then(() => entries(1, 1000000, 7))
+.then(() => entries(1, 1000000, 8))
+.then(() => entries(1, 1000000, 9))
+.then(() => entries(1, 1000000, 10))
+.then(() => writer.end())
+.catch(err => console.log(err));
