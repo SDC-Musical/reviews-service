@@ -47,11 +47,13 @@ let entries = function(start, stop) {
         if (err) {
           console.log(err);
         } else {
-          if (i === 10000000) {
-            console.log('COMPLETE');
-            return;
-          } else {
-            entries(start + 10, stop + 10);
+          if (j === quantity) {
+            if (i === 10000000) {
+              console.log('COMPLETE');
+              return;
+            } else {
+              entries(start + 100000, stop + 100000);
+            }
           }
         }
       })
@@ -64,7 +66,7 @@ let entries = function(start, stop) {
 
 let reviewList = createReviews();
 
-entries(1, 10);
+entries(1, 100000);
 
 // Promise.resolve(entries(1, 100000))
 // .catch(err => console.log(err));
