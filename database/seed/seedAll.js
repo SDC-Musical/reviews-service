@@ -39,6 +39,7 @@ let createReviews = function() {
 };
 
 let entries = function(start, stop) {
+  // let count = start;
   for (let i = start; i <= stop; i++) {
     let quantity = Math.ceil(Math.random() * 5);
     for (let j = 0; j < quantity; j++) {
@@ -47,12 +48,15 @@ let entries = function(start, stop) {
         if (err) {
           console.log(err);
         } else {
-          if (j === quantity) {
-            if (i === 10000000) {
-              console.log('COMPLETE');
-              return;
-            } else {
-              return entries(start + 100000, stop + 100000);
+          if (j === quantity - 1) {
+            if (i === stop) {
+              if (i === 10000000) {
+                console.log('COMPLETE');
+                return;
+              } else {
+                console.log(i);
+                return entries(start + 100000, stop + 100000);
+              }
             }
           }
         }
