@@ -55,7 +55,7 @@ let entries = function(start, stop) {
                 return;
               } else {
                 console.log(i);
-                return entries(start + 10000, stop + 10000);
+                return setTimeout(() => entries(start + 20000, stop + 20000), 200);
               }
             }
           }
@@ -70,7 +70,7 @@ let entries = function(start, stop) {
 
 let reviewList = createReviews();
 
-entries(1, 10000);
+entries(1, 20000);
 
 // Promise.resolve(entries(1, 100000))
 // .catch(err => console.log(err));
