@@ -55,7 +55,7 @@ let entries = function(start, stop) {
                 return;
               } else {
                 console.log(i);
-                return entries(start + 100000, stop + 100000);
+                return entries(start + 10000, stop + 10000);
               }
             }
           }
@@ -70,7 +70,7 @@ let entries = function(start, stop) {
 
 let reviewList = createReviews();
 
-entries(1, 100000);
+entries(1, 10000);
 
 // Promise.resolve(entries(1, 100000))
 // .catch(err => console.log(err));
