@@ -41,7 +41,16 @@ let createReviews = function() {
 let entries = function(start, stop) {
   // let count = start;
   for (let i = start; i <= stop; i++) {
-    let quantity = Math.ceil(Math.random() * 5);
+    let quantity = Math.floor(Math.random() * 6);
+    if (quantity === 0 && i === stop) {
+      if (stop === 10000000) {
+        console.log('COMPLETE');
+        return
+      } else {
+        console.log(i);
+        return entries(start + 1000, stop + 1000);
+      }
+    }
     for (let j = 0; j < quantity; j++) {
       let index = Math.floor(Math.random() * reviewList.length);
       client.query('INSERT INTO reviews(product_id, username, review_heading, review_text, review_rating, created_at) VALUES($1, $2, $3, $4, $5, $6) RETURNING *', [i, reviewList[index].username, reviewList[index].review_heading, reviewList[index].review_text, reviewList[index].review_rating, reviewList[index].created_at], (err, res) => {
@@ -55,7 +64,7 @@ let entries = function(start, stop) {
                 return;
               } else {
                 console.log(i);
-                return entries(start + 10000, stop + 10000);
+                return entries(start + 1000, stop + 1000);
               }
             }
           }
@@ -70,7 +79,7 @@ let entries = function(start, stop) {
 
 let reviewList = createReviews();
 
-entries(1, 10000);
+entries(1, 1000);
 
 // Promise.resolve(entries(1, 100000))
 // .catch(err => console.log(err));
