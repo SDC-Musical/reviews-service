@@ -48,7 +48,7 @@ let entries = function(start, stop) {
         return
       } else {
         console.log(i);
-        return entries(start + 1000, stop + 1000);
+        return entries(start + 10000, stop + 10000);
       }
     }
     for (let j = 0; j < quantity; j++) {
@@ -64,7 +64,7 @@ let entries = function(start, stop) {
                 return;
               } else {
                 console.log(i);
-                return entries(start + 1000, stop + 1000);
+                return entries(start + 10000, stop + 10000);
               }
             }
           }
@@ -79,7 +79,7 @@ let entries = function(start, stop) {
 
 let reviewList = createReviews();
 
-entries(1, 1000);
+entries(1, 10000);
 
 // Promise.resolve(entries(1, 100000))
 // .catch(err => console.log(err));
