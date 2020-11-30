@@ -46,8 +46,9 @@ let entries = function(start, stop) {
       if (stop === 10000000) {
         console.log('COMPLETE');
         return
-      } else if (stop % 1000000 === 0) {
-        return setTimeout(() => entries(start + 10000, stop + 10000), 1000);
+      } else if (stop % 2000000 === 0) {
+        console.log(i);
+        return setTimeout(() => entries(start + 10000, stop + 10000), 300);
       } else {
         console.log(i);
         return entries(start + 10000, stop + 10000);
@@ -64,8 +65,9 @@ let entries = function(start, stop) {
               if (i === 10000000) {
                 console.log('COMPLETE');
                 return;
-              } else if (stop % 1000000 === 0) {
-                return setTimeout(() => entries(start + 10000, stop + 10000), 1000);
+              } else if (stop % 2000000 === 0) {
+                console.log(i);
+                return setTimeout(() => entries(start + 10000, stop + 10000), 300);
               } else {
                 console.log(i);
                 return entries(start + 10000, stop + 10000);
