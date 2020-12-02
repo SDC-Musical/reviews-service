@@ -6,7 +6,8 @@ const getReviewSummary = product => {
     if (err) {
       console.log('PROBLEM GETTING THE REQUESTED REVIEWS: ', err);
     } else {
-      return res;
+      console.log('ROWS: ', res.rows);
+      return res.rows;
     }
   })
 };

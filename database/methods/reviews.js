@@ -11,13 +11,14 @@ const addReview = review => {
   })
 };
 
-const getReviews = async product => {
+const getReviews = (product, limit = 0, cb) => {
   client.connect();
   client.query(`SELECT * FROM reviews WHERE product_id = ${product.product_id}`, (err, res) => {
     if (err) {
       console.log('PROBLEM GETTING THE REQUESTED REVIEWS: ', err);
     } else {
-      return res.rows;
+      console.log(res.rows);
+      cb(null, res.rows);
     }
   })
 };
