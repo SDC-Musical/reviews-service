@@ -35,7 +35,8 @@ router.route('/:product_id')
       }
     } else req.query.limit = 0;
     try {
-      const reviews = await getReviews(req.options, Number(req.query.limit));
+      const reviews = await getReviews(req.options);
+      console.log(reviews);
       if (reviews.length > 0) res.json(reviews);
       else res.status(404).send('Reviews Not Found.');
     } catch {
