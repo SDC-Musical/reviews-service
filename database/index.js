@@ -1,16 +1,27 @@
-const mongoose = require('mongoose');
+const { Client } = require('pg');
+const client = new Client({database: 'product_reviews'});
 
-const mongoUri = (process.env.NODE_ENV === 'production')
-  ? 'mongodb://mongo:27017/reviews-service'
-  : 'mongodb://localhost/reviews-service';
-
-mongoose.connect(mongoUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
+client.connect(err => {
+  if (err) {
+    console.log('PROBLEM CONNECTING TO DATABASE: ', err.stack)
+  } else {
+    console.log('CONNECTED')
+  }
 });
 
-const db = mongoose.connection;
-db.on('error', () => console.error('Connection Error'));
-db.once('open', () => console.log('Connected to MongoDB'));
+// const mongoose = require('mongoose');
+
+// const mongoUri = (process.env.NODE_ENV === 'production')
+//   ? 'mongodb://mongo:27017/reviews-service'
+//   : 'mongodb://localhost/reviews-service';
+
+// mongoose.connect(mongoUri, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+//   useFindAndModify: false,
+//   useCreateIndex: true,
+// });
+
+// const db = mongoose.connection;
+// db.on('error', () => console.error('Connection Error'));
+// db.once('open', () => console.log('Connected to MongoDB'));

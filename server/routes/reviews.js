@@ -18,9 +18,14 @@ router.param('product_id', (req, res, next, product_id) => {
 router.route('/:product_id/summary')
   .get(async (req, res) => {
     try {
-      const reviewSummary = await getReviewSummary(req.options.product_id);
-      if (reviewSummary.length > 0) res.json(reviewSummary);
+      const reviewSummary = await getReviewSummary(req.options.product_id, (err, data) => {
+        console.log('SUMMARY: ', data);
+      if (data.length > 0) res.json(data);
       else res.status(404).send('Review Summary Not Found.');
+      });
+      // console.log('SUMMARY: ', reviewSummary);
+      // if (reviewSummary.length > 0) res.json(reviewSummary);
+      // else res.status(404).send('Review Summary Not Found.');
     } catch {
       res.status(500).send('Internal Server Error.');
     }
@@ -35,9 +40,10 @@ router.route('/:product_id')
       }
     } else req.query.limit = 0;
     try {
-      const reviews = await getReviews(req.options, Number(req.query.limit));
-      if (reviews.length > 0) res.json(reviews);
+      const reviews = await getReviews(req.options, req.query.limit, (err, data) => {
+      if (data.length > 0) res.json(data);
       else res.status(404).send('Reviews Not Found.');
+      });
     } catch {
       res.status(500).send('Internal Server Error.');
     }
