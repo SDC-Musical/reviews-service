@@ -16,10 +16,12 @@ const getReviewSummary = (product, cb) => {
       console.log('PROBLEM GETTING THE REQUESTED REVIEWS: ', err);
     } else {
       summary[0].total_reviews = res.rows.length;
-      for (let i = 0; i < res.rows; i++) {
-        let rating = res.rows[i].review_rating;
-        summary[0][`rating_${rating}`] += 1;
-      }
+      summary[0].rating_1 = res.rows.filter(review => review.review_rating === 1).length;
+      summary[0].rating_2 = res.rows.filter(review => review.review_rating === 2).length;
+      summary[0].rating_3 = res.rows.filter(review => review.review_rating === 3).length;
+      summary[0].rating_4 = res.rows.filter(review => review.review_rating === 4).length;
+      summary[0].rating_5 = res.rows.filter(review => review.review_rating === 5).length;
+      console.log('RETURNED SUMMARY: ', summary);
       cb(null, summary);
     }
   })
