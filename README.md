@@ -57,6 +57,7 @@ Refer to package.json file in the root directory for dependency version numbers.
 ## Product-API
 - GET /:product_id/summary returns a summary of reviews for product
 - GET /:product_id returns reviews for product
-- PUT /:product_id updates reviews for product and returns number of changes made
+- PUT /:product_id updates reviews for product and if change was made
 - POST /:product_id adds a review for product and returns review
 - DELETE /:product_id removes all reviews for product and returns success message
+- IMPORTANT ---- For PUT and DELETE the product_id refers to the review itself rather than the product it is associated with.

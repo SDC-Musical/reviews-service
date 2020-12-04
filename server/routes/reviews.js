@@ -1,5 +1,5 @@
 const express = require('express');
-const { getReviews } = require('../../database/methods/reviews.js');
+const { getReviews, addReview, updateReview, deleteReview } = require('../../database/methods/reviews.js');
 const ReviewModel = require('../../database/models/reviews.js');
 const { getReviewSummary } = require('../../database/methods/reviewsummary.js');
 const { queryReviewRating } = require('../middleware/queryParams.js');
@@ -23,9 +23,6 @@ router.route('/:product_id/summary')
       if (data.length > 0) res.json(data);
       else res.status(404).send('Review Summary Not Found.');
       });
-      // console.log('SUMMARY: ', reviewSummary);
-      // if (reviewSummary.length > 0) res.json(reviewSummary);
-      // else res.status(404).send('Review Summary Not Found.');
     } catch {
       res.status(500).send('Internal Server Error.');
     }
@@ -50,12 +47,13 @@ router.route('/:product_id')
   })
   .put(async (req, res) => {
     try {
-      const updateProduct = await ReviewModel.update({product_id: req.options.product_id}, req.data);
-      if (updateProduct < 1) {
-        res.status(404).send('Product Not Found');
-      } else {
-        res.status(200).send(`${updateProduct.n} product(s) updated.`);
-      }
+      const updateProduct = await updateReview(req.body.column, req.body.info, req.options.product_id, (err, string) => {
+        if (err) {
+          res.status(404).send(`Review ${req.options.product_id} not found.`);
+        } else {
+          res.status(200).send(string);
+        }
+      });
     } catch {
       res.status(500).send('Internal Server Error.');
     }
@@ -63,16 +61,21 @@ router.route('/:product_id')
   .post(async (req, res) => {
     try {
       let timestamp = new Date();
-      const newReview = await ReviewModel.create({
-        review_id: req.options.product_id,
+      const newReview = await addReview({
         product_id: req.options.product_id,
         username: req.body.username,
         review_heading: req.body.review_heading,
         review_text: req.body.review_text,
         review_rating: req.body.review_rating,
         created_at: `${timestamp.getMonth() + 1} ${timestamp.getDate() + 1}, ${timestamp.getFullYear()} ${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`
+      }, (err, data) => {
+        if (err) {
+          console.log('PROBLEM ADDING REVIEW: ', err);
+          res.status(500).send('Internal Server Error.');
+        } else {
+          res.json(data);
+        }
       });
-      res.json(newReview);
     } catch(err) {
       console.log('ERROR: ', err);
       res.status(500).send('Internal Server Error.');
@@ -80,8 +83,13 @@ router.route('/:product_id')
   })
   .delete(async (req, res) => {
     try {
-      await ReviewModel.deleteMany({product_id: req.options.product_id});
-      res.status(200).send('Product Deleted');
+      await deleteReview(req.options.product_id, (err, string) => {
+        if (err) {
+          res.status(404).send('Review not found.')
+        } else {
+          res.status(200).send(string);
+        }
+      });
     } catch {
       res.status(500).send('Internal Server Error.');
     }
