@@ -23,9 +23,6 @@ router.route('/:product_id/summary')
       if (data.length > 0) res.json(data);
       else res.status(404).send('Review Summary Not Found.');
       });
-      // console.log('SUMMARY: ', reviewSummary);
-      // if (reviewSummary.length > 0) res.json(reviewSummary);
-      // else res.status(404).send('Review Summary Not Found.');
     } catch {
       res.status(500).send('Internal Server Error.');
     }
@@ -57,11 +54,6 @@ router.route('/:product_id')
           res.status(200).send(string);
         }
       });
-      // if (updateProduct < 1) {
-      //   res.status(404).send('Product Not Found');
-      // } else {
-      //   res.status(200).send(`${updateProduct.n} product(s) updated.`);
-      // }
     } catch {
       res.status(500).send('Internal Server Error.');
     }
@@ -84,7 +76,6 @@ router.route('/:product_id')
           res.json(data);
         }
       });
-      // res.json(newReview);
     } catch(err) {
       console.log('ERROR: ', err);
       res.status(500).send('Internal Server Error.');
@@ -99,7 +90,6 @@ router.route('/:product_id')
           res.status(200).send(string);
         }
       });
-      // res.status(200).send('Product Deleted');
     } catch {
       res.status(500).send('Internal Server Error.');
     }
