@@ -1,0 +1,55 @@
+config:
+  target: "http://localhost:3001"
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      name: Warm up
+  variables:
+    product_id:
+      - "1"
+      - "23593"
+      - "100000"
+      - "1500000"
+      - "2930002"
+      - "3500000"
+      - "3739003"
+      - "5000000"
+      - "7000303"
+      - "8001000"
+    username:
+      - "happygolucky"
+      - "user3939"
+      - "futuretestsubject"
+      - "funinthesun"
+      - "whoami"
+    review_heading:
+      - "Love it"
+      - "Wow"
+      - "Do not buy"
+      - "OK"
+    review_text:
+      - "I really love this item.  It is amazing."
+      - "This is such a bargain.  The family loves it.  I may buy more."
+      - "This item is garbage.  Do not waste your money."
+      - "It works.  Enough said."
+    review_rating:
+      - "1"
+      - "2"
+      - "3"
+      - "4"
+      - "5"
+scenarios:
+  - name: "Look at items"
+    flow:
+      - get:
+        url: "/api/reviews/{{product_id}}"
+      - think: 3
+  - name: "Add a review"
+    flow:
+      - post:
+        url: "/api/reviews/{{product_id}}"
+        body:
+          username: {{username}}
+          review_heading: {{review_heading}}
+          review_text: {{review_text}}
+          review_rating: {{review_rating}}
