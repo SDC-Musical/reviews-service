@@ -42,14 +42,14 @@ scenarios:
   - name: "Look at items"
     flow:
       - get:
-        url: "/api/reviews/{{product_id}}"
+          url: "/api/reviews/{{product_id}}"
       - think: 3
   - name: "Add a review"
     flow:
       - post:
-        url: "/api/reviews/{{product_id}}"
-        body:
-          username: {{username}}
-          review_heading: {{review_heading}}
-          review_text: {{review_text}}
-          review_rating: {{review_rating}}
+          url: "/api/reviews/{{product_id}}"
+          json:
+            username: {{username}}
+            review_heading: {{review_heading}}
+            review_text: {{review_text}}
+            review_rating: {{review_rating}}
