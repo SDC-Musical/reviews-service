@@ -48,8 +48,8 @@ scenarios:
     flow:
       - post:
           url: "/api/reviews/{{product_id}}"
-          json:
-            username: {{username}}
-            review_heading: {{review_heading}}
-            review_text: {{review_text}}
-            review_rating: {{review_rating}}
+          form:
+            username: "{{username}}"
+            review_heading: "{{review_heading}}"
+            review_text: "{{review_text}}"
+            review_rating: "{{review_rating}}"
