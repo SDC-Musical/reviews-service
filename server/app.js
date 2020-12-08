@@ -1,4 +1,5 @@
 const express = require('express');
+require('newrelic');
 const path = require('path');
 const bodyParser = require('body-parser');
 const reviewRouter = require('./routes/reviews.js')

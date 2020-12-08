@@ -33,3 +33,6 @@ artifacts/
 
 # Seeded Data File
 data.csv
+
+# New Relic
+newrelic.js
