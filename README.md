@@ -14,6 +14,7 @@
 2. [Usage](#usage)
 3. [Development](#development)
 4. [Product-API](#product-api)
+5. [Database-Management](#database-management)
 
 ## Requirements
 
@@ -61,3 +62,19 @@ Refer to package.json file in the root directory for dependency version numbers.
 - POST /:product_id adds a review for product and returns review
 - DELETE /:product_id removes all reviews for product and returns success message
 - IMPORTANT ---- For PUT and DELETE the product_id refers to the review itself rather than the product it is associated with.
+
+## Database Management
+- Download PostgreSQL
+- Start PostgreSQL in Terminal: pg_ctl -D /usr/local/var/postgres start
+- Create database: createdb product_reviews
+- Open database in PostgreSQL: psql product_reviews
+- Paste the following into the PostgreSQL command line: CREATE TABLE reviews(
+  id serial NOT NULL,
+  product_id integer NOT NULL,
+  username text NOT NULL,
+  review_heading text NOT NULL,
+  review_text text NOT NULL,
+  review_rating smallint NOT NULL,
+  created_at timestamp without time zone NOT NULL
+);
+- In terminal run: npm run db:seed
