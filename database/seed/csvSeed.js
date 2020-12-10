@@ -19,7 +19,7 @@ let createReviews = function() {
 
   let reviews = [];
   for (let i = 0; i < 50; i++) {
-    let headingQuantity = Math.ceil(Math.random() * 3)
+    let headingQuantity = Math.ceil(Math.random() * 3);
     let month = Math.ceil(Math.random() * 12);
     let day = Math.ceil(Math.random() * 28);
     let hour = Math.floor(Math.random() * 24);
