@@ -79,3 +79,4 @@ Refer to package.json file in the root directory for dependency version numbers.
 );
 - In terminal run: npm run db:seed
 - Once complete switch back to the PostgreSQL command line and run: COPY reviews FROM ‘{path to csv file}’ WITH DELIMITER ',' CSV HEADER;
+- To reduce query times run the following in PostgreSQL command line: CREATE INDEX idx_reviews_product ON reviews(product_id);
