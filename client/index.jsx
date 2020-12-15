@@ -5,7 +5,7 @@ import App from './components/App';
 
 ReactDOM.render(
   <Router>
-    <Route path="/products/:id(\d+)" component={App} />
+    <Route path="/:id(\d+)" component={App} />
   </Router>,
   document.getElementById('reviews-service'),
 );
