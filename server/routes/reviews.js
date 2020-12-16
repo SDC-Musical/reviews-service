@@ -51,11 +51,11 @@ router.route('/:product_id')
         } else if (reply) {
           console.log('REDIS REPLY');
           client.expire(`${req.options.product_id}`, 10);
-          res.json(reply);
+          res.send(reply);
         } else {
           getReviews(req.options, req.query.limit, async (err, data) => {
             if (data.length > 0) {
-              const setCache = await client.set(`${req.options.product_id}`, `${data}`, (err, reply) => {
+              const setCache = await client.set(`${req.options.product_id}`, JSON.stringify(data), (err, reply) => {
                 if (err) {
                   console.log('PROBLEM SETTING CACHE: ', err);
                   res.status(500).send('Cache Error.');
