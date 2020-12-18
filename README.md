@@ -69,7 +69,7 @@ Refer to package.json file in the root directory for dependency version numbers.
 - Create database: createdb product_reviews
 - Open database in PostgreSQL: psql product_reviews
 - Paste the following into the PostgreSQL command line: CREATE TABLE reviews(
-  id serial NOT NULL,
+  id serial PRIMARY KEY,
   product_id integer NOT NULL,
   username text NOT NULL,
   review_heading text NOT NULL,
