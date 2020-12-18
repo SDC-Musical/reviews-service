@@ -52,10 +52,22 @@ const deleteReview = (id, cb) => {
   })
 };
 
+const getProduct = (review, cb) => {
+  client.query(`SELECT product_id FROM reviews WHERE id = ${review}`, (err, res) => {
+    if (err) {
+      console.log('COULD NOT FIND THIS REVIEW: ', err);
+      cb(err);
+    } else {
+      cb(null, res.rows[0].product_id);
+    }
+  })
+};
+
 module.exports = {
   pgConnect,
   addReview,
   getReviews,
   updateReview,
-  deleteReview
+  deleteReview,
+  getProduct
 };

@@ -1,5 +1,5 @@
 const express = require('express');
-const { pgConnect, getReviews, addReview, updateReview, deleteReview } = require('../../database/methods/reviews.js');
+const { pgConnect, getReviews, addReview, updateReview, deleteReview, getProduct } = require('../../database/methods/reviews.js');
 const ReviewModel = require('../../database/models/reviews.js');
 const { getReviewSummary } = require('../../database/methods/reviewsummary.js');
 const { queryReviewRating } = require('../middleware/queryParams.js');
@@ -82,46 +82,49 @@ router.route('/:product_id')
   })
   .put(async (req, res) => {
     try {
-      const updateProduct = await updateReview(req.body.column, req.body.info, req.options.product_id, (err, string) => {
+      const updateProduct = await updateReview(req.body.column, req.body.info, req.options.product_id, async (err, string) => {
         if (err) {
           res.status(404).send(`Review ${req.options.product_id} not found.`);
         } else {
-          client.del(`${req.options.product_id}`, async (err, value) => {
-            if (err) {
-              console.log('PROBLEM DELETING ENTRY: ', err);
-              res.status(500).send('Cache Error.');
-            } else if (value === 0) {
-              res.status(200).send(string);
-            } else {
-              console.log(`DELETED ${value}`);
-              if (req.query.limit !== undefined) {
-                if (Number.isNaN(Number(req.query.limit)) || req.query.limit === '' || Number(req.query.limit) < 0) {
-                  res.status(400).send('Bad Request.');
-                  return;
-                }
-              } else req.query.limit = 0;
-              const reset = await getReviews(req.options, req.query.limit, async (err, data) => {
-                if (data.length > 0) {
-                  const setCache = await client.set(`${req.options.product_id}`, JSON.stringify(data), (err, reply) => {
-                    if (err) {
-                      console.log('PROBLEM SETTING CACHE: ', err);
-                      res.status(500).send('Cache Error.');
-                    } else {
-                      client.expire(`${req.options.product_id}`, 10, (err, reply) => {
-                        if (err) {
-                          console.log('PROBLEM SETTING EXPIRY: ', err);
-                          res.status(500).send('Cache Error');
-                        } else {
-                          res.status(200).send(string);
-                        }
-                      });
-                    }
-                  });
-                } else {
-                  res.status(404).send('Reviews Not Found.');
-                }
-              });
-            }
+          const retrieve = await getProduct(req.options.product_id, (err, product) => {
+            client.del(`${product}`, async (err, value) => {
+              if (err) {
+                console.log('PROBLEM DELETING ENTRY: ', err);
+                res.status(500).send('Cache Error.');
+              } else if (value === 0) {
+                console.log('NO DELETIONS');
+                res.status(200).send(string);
+              } else {
+                console.log(`DELETED ${value}`);
+                if (req.query.limit !== undefined) {
+                  if (Number.isNaN(Number(req.query.limit)) || req.query.limit === '' || Number(req.query.limit) < 0) {
+                    res.status(400).send('Bad Request.');
+                    return;
+                  }
+                } else req.query.limit = 0;
+                const reset = await getReviews({product_id: product}, req.query.limit, async (err, data) => {
+                  if (data.length > 0) {
+                    const setCache = await client.set(`${product}`, JSON.stringify(data), (err, reply) => {
+                      if (err) {
+                        console.log('PROBLEM SETTING CACHE: ', err);
+                        res.status(500).send('Cache Error.');
+                      } else {
+                        client.expire(`${product}`, 10, (err, reply) => {
+                          if (err) {
+                            console.log('PROBLEM SETTING EXPIRY: ', err);
+                            res.status(500).send('Cache Error');
+                          } else {
+                            res.status(200).send(string);
+                          }
+                        });
+                      }
+                    });
+                  } else {
+                    res.status(404).send('Reviews Not Found.');
+                  }
+                });
+              }
+            })
           })
         }
       });
