@@ -1,5 +1,5 @@
 const express = require('express');
-const { pgConnect, getReviews, addReview, updateReview, deleteReview } = require('../../database/methods/reviews.js');
+const { pgConnect, getReviews, addReview, updateReview, deleteReview, getProduct, getLast } = require('../../database/methods/reviews.js');
 const ReviewModel = require('../../database/models/reviews.js');
 const { getReviewSummary } = require('../../database/methods/reviewsummary.js');
 const { queryReviewRating } = require('../middleware/queryParams.js');
@@ -50,7 +50,6 @@ router.route('/:product_id')
           res.status(500).send('Cache Error.');
         } else if (reply) {
           console.log('REDIS REPLY');
-          client.expire(`${req.options.product_id}`, 10);
           res.send(reply);
         } else {
           getReviews(req.options, req.query.limit, async (err, data) => {
@@ -60,14 +59,7 @@ router.route('/:product_id')
                   console.log('PROBLEM SETTING CACHE: ', err);
                   res.status(500).send('Cache Error.');
                 } else {
-                  client.expire(`${req.options.product_id}`, 10, (err, reply) => {
-                    if (err) {
-                      console.log('PROBLEM SETTING EXPIRY: ', err);
-                      res.status(500).send('Cache Error');
-                    } else {
-                      res.json(data);
-                    }
-                  });
+                  res.json(data);
                 }
               });
             } else {
@@ -82,11 +74,43 @@ router.route('/:product_id')
   })
   .put(async (req, res) => {
     try {
-      const updateProduct = await updateReview(req.body.column, req.body.info, req.options.product_id, (err, string) => {
+      const updateProduct = await updateReview(req.body.column, req.body.info, req.options.product_id, async (err, string) => {
         if (err) {
           res.status(404).send(`Review ${req.options.product_id} not found.`);
         } else {
-          res.status(200).send(string);
+          const retrieve = await getProduct(req.options.product_id, (err, product) => {
+            client.del(`${product}`, async (err, value) => {
+              if (err) {
+                console.log('PROBLEM DELETING ENTRY: ', err);
+                res.status(500).send('Cache Error.');
+              } else if (value === 0) {
+                console.log('NO DELETIONS');
+                res.status(200).send(string);
+              } else {
+                console.log(`DELETED ${value}`);
+                if (req.query.limit !== undefined) {
+                  if (Number.isNaN(Number(req.query.limit)) || req.query.limit === '' || Number(req.query.limit) < 0) {
+                    res.status(400).send('Bad Request.');
+                    return;
+                  }
+                } else req.query.limit = 0;
+                const reset = await getReviews({product_id: product}, req.query.limit, async (err, data) => {
+                  if (data.length > 0) {
+                    const setCache = await client.set(`${product}`, JSON.stringify(data), (err, reply) => {
+                      if (err) {
+                        console.log('PROBLEM SETTING CACHE: ', err);
+                        res.status(500).send('Cache Error.');
+                      } else {
+                        res.status(200).send(string);
+                      }
+                    });
+                  } else {
+                    res.status(404).send('Reviews Not Found.');
+                  }
+                });
+              }
+            })
+          })
         }
       });
     } catch {
@@ -96,19 +120,57 @@ router.route('/:product_id')
   .post(async (req, res) => {
     try {
       let timestamp = new Date();
-      const newReview = await addReview({
-        product_id: req.options.product_id,
-        username: req.body.username,
-        review_heading: req.body.review_heading,
-        review_text: req.body.review_text,
-        review_rating: req.body.review_rating,
-        created_at: `${timestamp.getMonth() + 1} ${timestamp.getDate() + 1}, ${timestamp.getFullYear()} ${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`
-      }, (err, data) => {
+      const newID = await getLast(async (err, id) => {
         if (err) {
-          console.log('PROBLEM ADDING REVIEW: ', err);
-          res.status(500).send('Internal Server Error.');
+          console.log('PROBLEM GETTING ID');
+          res.status(500).send('Database Error.');
         } else {
-          res.json(data);
+          const newReview = await addReview({
+            id: id + 1,
+            product_id: req.options.product_id,
+            username: req.body.username,
+            review_heading: req.body.review_heading,
+            review_text: req.body.review_text,
+            review_rating: req.body.review_rating,
+            created_at: `${timestamp.getMonth() + 1} ${timestamp.getDate() + 1}, ${timestamp.getFullYear()} ${timestamp.getHours()}:${timestamp.getMinutes()}:${timestamp.getSeconds()}`
+          }, (err, data) => {
+            if (err) {
+              console.log('PROBLEM ADDING REVIEW: ', err);
+              res.status(500).send('Internal Server Error.');
+            } else {
+              client.del(`${req.options.product_id}`, async (err, value) => {
+                if (err) {
+                  console.log('PROBLEM DELETING ENTRY: ', err);
+                  res.status(500).send('Cache Error.');
+                } else if (value === 0) {
+                  console.log('NO DELETIONS');
+                  res.json(data);
+                } else {
+                  console.log(`DELETED ${value}`);
+                  if (req.query.limit !== undefined) {
+                    if (Number.isNaN(Number(req.query.limit)) || req.query.limit === '' || Number(req.query.limit) < 0) {
+                      res.status(400).send('Bad Request.');
+                      return;
+                    }
+                  } else req.query.limit = 0;
+                  const reset = await getReviews(req.options, req.query.limit, async (err, data) => {
+                    if (data.length > 0) {
+                      const setCache = await client.set(`${req.options.product_id}`, JSON.stringify(data), (err, reply) => {
+                        if (err) {
+                          console.log('PROBLEM SETTING CACHE: ', err);
+                          res.status(500).send('Cache Error.');
+                        } else {
+                          res.json(data);
+                        }
+                      });
+                    } else {
+                      res.status(404).send('Reviews Not Found.');
+                    }
+                  });
+                }
+              })
+            }
+          });
         }
       });
     } catch(err) {
@@ -118,12 +180,44 @@ router.route('/:product_id')
   })
   .delete(async (req, res) => {
     try {
-      await deleteReview(req.options.product_id, (err, string) => {
-        if (err) {
-          res.status(404).send('Review not found.')
-        } else {
-          res.status(200).send(string);
-        }
+      const retrieve = await getProduct(req.options.product_id, async (err, product) => {
+        await deleteReview(req.options.product_id, (err, string) => {
+          if (err) {
+            res.status(404).send('Review not found.')
+          } else {
+            client.del(`${product}`, async (err, value) => {
+              if (err) {
+                console.log('PROBLEM DELETING ENTRY: ', err);
+                res.status(500).send('Cache Error.');
+              } else if (value === 0) {
+                console.log('NO DELETIONS');
+                res.status(200).send(string);
+              } else {
+                console.log(`DELETED ${value}`);
+                if (req.query.limit !== undefined) {
+                  if (Number.isNaN(Number(req.query.limit)) || req.query.limit === '' || Number(req.query.limit) < 0) {
+                    res.status(400).send('Bad Request.');
+                    return;
+                  }
+                } else req.query.limit = 0;
+                const reset = await getReviews({product_id: product}, req.query.limit, async (err, data) => {
+                  if (data.length > 0) {
+                    const setCache = await client.set(`${product}`, JSON.stringify(data), (err, reply) => {
+                      if (err) {
+                        console.log('PROBLEM SETTING CACHE: ', err);
+                        res.status(500).send('Cache Error.');
+                      } else {
+                        res.status(200).send(string);
+                      }
+                    });
+                  } else {
+                    res.status(404).send('Reviews Not Found.');
+                  }
+                });
+              }
+            })
+          }
+        })
       });
     } catch {
       res.status(500).send('Internal Server Error.');
