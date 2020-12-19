@@ -15,6 +15,7 @@
 3. [Development](#development)
 4. [Product-API](#product-api)
 5. [Database-Management](#database-management)
+6. [Cache](#cache)
 
 ## Requirements
 
@@ -80,3 +81,10 @@ Refer to package.json file in the root directory for dependency version numbers.
 - In terminal run: npm run db:seed
 - Once complete switch back to the PostgreSQL command line and run: COPY reviews FROM ‘{path to csv file}’ WITH DELIMITER ',' CSV HEADER;
 - To reduce query times run the following in PostgreSQL command line: CREATE INDEX idx_reviews_product ON reviews(product_id);
+
+## Cache
+- Download Redis
+- Edit redis.conf with the following:
+- On line 861 add: maxmemory {amount you want to cache (ex. 100mb)}
+- On line 892 add: maxmemory-policy allkeys-lru
+- Navigate to the redis folder in Terminal and type: src/redis-server {path to redis.conf file}

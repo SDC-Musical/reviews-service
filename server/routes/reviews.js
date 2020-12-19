@@ -50,7 +50,6 @@ router.route('/:product_id')
           res.status(500).send('Cache Error.');
         } else if (reply) {
           console.log('REDIS REPLY');
-          client.expire(`${req.options.product_id}`, 10);
           res.send(reply);
         } else {
           getReviews(req.options, req.query.limit, async (err, data) => {
@@ -60,14 +59,7 @@ router.route('/:product_id')
                   console.log('PROBLEM SETTING CACHE: ', err);
                   res.status(500).send('Cache Error.');
                 } else {
-                  client.expire(`${req.options.product_id}`, 10, (err, reply) => {
-                    if (err) {
-                      console.log('PROBLEM SETTING EXPIRY: ', err);
-                      res.status(500).send('Cache Error');
-                    } else {
-                      res.json(data);
-                    }
-                  });
+                  res.json(data);
                 }
               });
             } else {
@@ -109,14 +101,7 @@ router.route('/:product_id')
                         console.log('PROBLEM SETTING CACHE: ', err);
                         res.status(500).send('Cache Error.');
                       } else {
-                        client.expire(`${product}`, 10, (err, reply) => {
-                          if (err) {
-                            console.log('PROBLEM SETTING EXPIRY: ', err);
-                            res.status(500).send('Cache Error');
-                          } else {
-                            res.status(200).send(string);
-                          }
-                        });
+                        res.status(200).send(string);
                       }
                     });
                   } else {
@@ -175,14 +160,7 @@ router.route('/:product_id')
                           console.log('PROBLEM SETTING CACHE: ', err);
                           res.status(500).send('Cache Error.');
                         } else {
-                          client.expire(`${req.options.product_id}`, 10, (err, reply) => {
-                            if (err) {
-                              console.log('PROBLEM SETTING EXPIRY: ', err);
-                              res.status(500).send('Cache Error');
-                            } else {
-                              res.json(data);
-                            }
-                          });
+                          res.json(data);
                         }
                       });
                     } else {
@@ -207,7 +185,6 @@ router.route('/:product_id')
           if (err) {
             res.status(404).send('Review not found.')
           } else {
-          // const retrieve = await getProduct(req.options.product_id, (err, product) => {
             client.del(`${product}`, async (err, value) => {
               if (err) {
                 console.log('PROBLEM DELETING ENTRY: ', err);
@@ -230,14 +207,7 @@ router.route('/:product_id')
                         console.log('PROBLEM SETTING CACHE: ', err);
                         res.status(500).send('Cache Error.');
                       } else {
-                        client.expire(`${product}`, 10, (err, reply) => {
-                          if (err) {
-                            console.log('PROBLEM SETTING EXPIRY: ', err);
-                            res.status(500).send('Cache Error');
-                          } else {
-                            res.status(200).send(string);
-                          }
-                        });
+                        res.status(200).send(string);
                       }
                     });
                   } else {
