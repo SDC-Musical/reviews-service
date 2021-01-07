@@ -36,3 +36,6 @@ data.csv
 
 # New Relic
 newrelic.js
+
+# Database Management
+dbpass.js

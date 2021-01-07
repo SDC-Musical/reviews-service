@@ -1,5 +1,11 @@
+const pass = require('../dbpass.js');
 const { Client } = require('pg');
-const client = new Client({database: 'product_reviews'});
+const client = new Client({
+  user: 'postgres',
+  password: pass.pass,
+  host: '18.191.213.193',
+  database: 'postgres'
+});
 
 const pgConnect = () => client.connect();
 
