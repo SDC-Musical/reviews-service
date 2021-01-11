@@ -15,7 +15,8 @@ pgConnect();
 const router = express.Router();
 
 router.param('product_id', (req, res, next, product_id) => {
-  if (Number.isNaN(Number(product_id))) {
+  console.log(product_id);
+	if (Number.isNaN(Number(product_id))) {
     res.status(400).send('Bad Request.');
     return;
   }

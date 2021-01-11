@@ -3,10 +3,17 @@ import sampleReviews from '../sampleReviews.json';
 import sampleReviewSummary from '../sampleReviewSummary.json';
 
 const useAPI = (url) => {
-  const [apiData, setApiData] = useState(null);
+ console.log('URL', url);
+	const [apiData, setApiData] = useState(null);
 
   useEffect(() => {
-    fetch(url)
+   console.log('FETCH URL', url);
+	  fetch(url, {
+	    headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+	    }
+    })
       .then((res) => {
         if (!res.ok) {
           if (url.indexOf('reviews/1/summary') !== -1) return [sampleReviewSummary[0]];
@@ -18,6 +25,7 @@ const useAPI = (url) => {
         return res.json();
       })
       .then((data) => {
+	console.log('DATA', data);
         setApiData(data);
       });
   }, []);
