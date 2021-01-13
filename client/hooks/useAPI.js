@@ -7,7 +7,7 @@ const useAPI = (url) => {
 	const [apiData, setApiData] = useState(null);
 
   useEffect(() => {
-   console.log('FETCH URL', url);
+    console.log('FETCH URL', url);
 	  fetch(url, {
 	    headers: {
     'Content-Type': 'application/json',
