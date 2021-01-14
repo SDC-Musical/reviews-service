@@ -1,6 +1,6 @@
 const pass = require('../dbpass.js');
-const { Client } = require('pg');
-const client = new Client({
+const { Pool, Client } = require('pg');
+const pool = new Pool({
   user: 'postgres',
   password: pass.pass,
   host: '3.19.63.99',
@@ -8,7 +8,7 @@ const client = new Client({
 });
 
 const getReviewSummary = (product, cb) => {
-  client.connect();
+  pool.connect();
   let summary = [{
     rating_1: 0,
     rating_2: 0,
@@ -17,7 +17,7 @@ const getReviewSummary = (product, cb) => {
     rating_5: 0,
     total_reviews: 0
   }];
-  client.query(`SELECT * FROM reviews WHERE product_id = ${product}`, (err, res) => {
+  pool.query(`SELECT * FROM reviews WHERE product_id = ${product}`, (err, res) => {
     if (err) {
       console.log('PROBLEM GETTING THE REQUESTED REVIEWS: ', err);
     } else {

@@ -1,13 +1,13 @@
 const pass = require('./dbpass.js');
-const { Client } = require('pg');
-const client = new Client({
+const { Pool, Client } = require('pg');
+const pool = new Pool({
   user: 'postgres',
   password: pass.pass,
   host: '3.19.63.99',
   database: 'postgres'
 });
 
-client.connect(err => {
+pool.connect(err => {
   if (err) {
     console.log('PROBLEM CONNECTING TO DATABASE: ', err.stack)
   } else {
